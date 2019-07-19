@@ -1,0 +1,16 @@
+sync_gtasks_grocy.py
+installation :
+    1 : create a credentials json : go to https://developers.google.com/tasks/quickstart/python#step_1_turn_on_the
+        "Enable The Google Tasks API"
+    2 : copy file to a writable Hass directory
+    3 : add to your configuration.yaml file an input_text with name you want (needed for first authentication)
+    2 : create a Grocy key API (check in Grocy : Settings/Manage API keys)
+    3 : set up your apps.yaml
+    4 : copy sync_gtasks_grocy.py to your appdaemon apps directory
+first authentication :
+    1 : identify your Google account on in url in notification
+    2 : enter your code in input_text from installation.step3
+
+notes :
+    tocken.pickle is your authentication tocken after first authentication. m
+    Refresh of this token has not been tested

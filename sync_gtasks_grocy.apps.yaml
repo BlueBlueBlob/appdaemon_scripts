@@ -1,0 +1,11 @@
+sync_gtasks_grocy:
+  module: sync_gtasks_grocy
+  class: SyncGTasksAndGrocy
+  grocy_key: !secret GROCY_API
+  grocy_port: '9192'
+  host: !secret HOST
+  ssl_verify: False
+  chores_list: 'Corvées'
+  input_txt_id: 'input_text.gtasks_rc'
+  credentials_json: '/config/credentials.json'
+  token_pickle: '/config/token.pickle'
