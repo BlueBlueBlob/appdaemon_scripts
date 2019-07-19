@@ -98,7 +98,7 @@ class SyncGTasksAndGrocy(hass.Hass):
                     return
                 else:
                     self.flow.fetch_token(code=self.return_code)
-                    self.creds = self.flow.credentials
+                    self.creds = self.flow.credentials()
                     if self.debug:
                         self.log(self.creds)
                     # Save the credentials for the next run
@@ -261,8 +261,11 @@ class SyncGTasksAndGrocy(hass.Hass):
     def return_code_cb(self, entity, attribute, old, new, kwargs):
         self.return_code = new
         self.new_auth = False
-        self.log(self.return_code)
+        if self.debug:
+            self.log("___function___")
+            self.log(self.return_code)
         self.cancel_listen_state(self.handle)
+        self.set_state(entity, '')
         self.connect()
         self.init_tasklist()
         self.handle = self.run_every(self.sync_cb , datetime.datetime.now() , 120)
