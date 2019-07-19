@@ -98,7 +98,7 @@ class SyncGTasksAndGrocy(hass.Hass):
                     return
                 else:
                     self.flow.fetch_token(code=self.return_code)
-                    self.creds = self.flow.credentials()
+                    self.creds = self.flow.credentials
                     if self.debug:
                         self.log(self.creds)
                     # Save the credentials for the next run
@@ -265,7 +265,7 @@ class SyncGTasksAndGrocy(hass.Hass):
             self.log("___function___")
             self.log(self.return_code)
         self.cancel_listen_state(self.handle)
-        self.set_state(entity, date = '')
+        self.set_textvalue(entity, ' ')
         self.connect()
         self.init_tasklist()
         self.handle = self.run_every(self.sync_cb , datetime.datetime.now() , 120)
