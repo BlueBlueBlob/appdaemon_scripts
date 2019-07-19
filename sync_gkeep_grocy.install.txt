@@ -1,0 +1,5 @@
+sync_gkeep_grocy installation :
+    1 : create a Google password app
+    2 : create a Grocy key API (check in Grocy : Settings/Manage API keys)
+    3 : set up your apps.yaml
+    4 : copy sync_gkeep_grocy.my to your appdaemon apps directory
