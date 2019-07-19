@@ -265,7 +265,7 @@ class SyncGTasksAndGrocy(hass.Hass):
             self.log("___function___")
             self.log(self.return_code)
         self.cancel_listen_state(self.handle)
-        self.set_state(entity, '')
+        self.set_state(entity, date = '')
         self.connect()
         self.init_tasklist()
         self.handle = self.run_every(self.sync_cb , datetime.datetime.now() , 120)
