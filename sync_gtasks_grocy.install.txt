@@ -1,4 +1,6 @@
 sync_gtasks_grocy.py
+appdaemon system packages : gcc g++
+appdaemon python packages : Requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
 installation :
     1 : create a credentials json : go to https://developers.google.com/tasks/quickstart/python#step_1_turn_on_the
         "Enable The Google Tasks API"
