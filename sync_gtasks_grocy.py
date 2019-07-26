@@ -268,7 +268,7 @@ class SyncGTasksAndGrocy(hass.Hass):
         self.set_textvalue(entity, ' ')
         self.connect()
         self.init_tasklist()
-        self.handle = self.run_every(self.sync_cb , datetime.datetime.now() , 120)
+        self.handle = self.run_every(self.sync_cb , datetime.datetime.now() , 300)
         
         
     def build_service(self):
