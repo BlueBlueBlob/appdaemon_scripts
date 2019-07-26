@@ -56,7 +56,7 @@ class SyncGKeepandGrocy(hass.Hass):
             if self.debug:
                 self.log("Grocy product : " + product['product']['name'] , level = "INFO")
         else:
-            self.log("Can not get product : " + product_id, level = "INFO")
+            self.log(r.json()['error_message'], level = "INFO")
         return product
     
     def get_g_sl(self):
@@ -66,7 +66,8 @@ class SyncGKeepandGrocy(hass.Hass):
             if self.debug:
                 self.log("Get shopping list succes" , level = "INFO")
         else:
-            self.log("Product " + grocy_item_id + " in error", level = "INFO")
+            self.log(r, level = "INFO")
+            
         return r.json()
         
     def purchase_product_grocy(self, grocy_item_id, best_date,price,amount):
@@ -80,7 +81,7 @@ class SyncGKeepandGrocy(hass.Hass):
                 self.log("Product " + grocy_item_id + " purchased successful", level = "INFO")
             return True
         else:
-            self.log("Product " + grocy_item_id + " in error", level = "INFO")
+            self.log(r.json()['error_message'], level = "INFO")
             return False
     
     def delete_product_sl_grocy(self, product_sl_id):
