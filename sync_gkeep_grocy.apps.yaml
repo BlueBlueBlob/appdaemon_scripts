@@ -8,3 +8,4 @@ sync_gkeep_grocy:
   google_username: !secret GOOGLE_EMAIL
   gkeep_token: !secret GOOGLE_KEEP
   gkeep_list: 'Courses'
+  app_timezone: 'Europe/Brussels'

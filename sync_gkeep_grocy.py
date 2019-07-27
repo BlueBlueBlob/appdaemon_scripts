@@ -8,12 +8,14 @@ class SyncGKeepandGrocy(hass.Hass):
     grocy_key = ""
     host = ""
     keep = None
+    app_timezone = ""
     gk_username = ""
     gk_token = ""
     gk_list = ""
     app_timezone = ""
     debug = False
     grocy_port = "9192"
+    timezones = None
     
     def initialize (self):
         self.gk_list = self.args["gkeep_list"]
@@ -26,6 +28,8 @@ class SyncGKeepandGrocy(hass.Hass):
         if 'DEBUG' in self.args:
             self.debug = self.args["DEBUG"]
         self.keep = gkeepapi.Keep()
+        self.app_timezone = self.args["app_timezone"]
+        self.timezone = pytz.timezone(self.app_timezone)
 
         # Attempt to login
         try:
@@ -122,7 +126,7 @@ class SyncGKeepandGrocy(hass.Hass):
         update_grocy = False
         gk_date_up = pytz.utc.localize(gk_tmp_l.timestamps.updated)
         for p in grocy_tmp_l:
-            p_time = pytz.utc.localize(datetime.datetime.strptime(p['row_created_timestamp'] , '%Y-%m-%d %H:%M:%S' ))
+            p_time = self.timezone.localize(datetime.datetime.strptime(p['row_created_timestamp'] , '%Y-%m-%d %H:%M:%S' ))
             p_obj = self.get_product_grocy(p['product_id'])
             if self.debug:
                 self.log("Grocy product time")
