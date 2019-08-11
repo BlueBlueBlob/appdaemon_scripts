@@ -1,11 +1,9 @@
 sync_gkeep_grocy:
   module: sync_gkeep_grocy
   class: SyncGKeepandGrocy
-  grocy_key: !secret GROCY_API
-  grocy_port: '9192'
-  host: !secret HOST
-  ssl_verify: False
   google_username: !secret GOOGLE_EMAIL
   gkeep_token: !secret GOOGLE_KEEP
   gkeep_list: 'Courses'
+  DEBUG: False
   app_timezone: 'Europe/Brussels'
+  dependencies: grocy_api

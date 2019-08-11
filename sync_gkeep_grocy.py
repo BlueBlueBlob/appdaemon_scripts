@@ -5,8 +5,7 @@ import gkeepapi
 import datetime
 import pytz
 class SyncGKeepandGrocy(hass.Hass):
-    grocy_key = ""
-    host = ""
+
     keep = None
     app_timezone = ""
     gk_username = ""
@@ -14,20 +13,17 @@ class SyncGKeepandGrocy(hass.Hass):
     gk_list = ""
     app_timezone = ""
     debug = False
-    grocy_port = "9192"
     timezones = None
+    grocyapi = None
     
     def initialize (self):
         self.gk_list = self.args["gkeep_list"]
-        self.grocy_key = self.args["grocy_key"]
-        self.grocy_port = self.args["grocy_port"]
-        self.ssl = self.args['ssl_verify']
         self.gk_username = self.args["google_username"]
         self.gk_token = self.args["gkeep_token"]
-        self.host = self.args["host"]
         if 'DEBUG' in self.args:
             self.debug = self.args["DEBUG"]
         self.keep = gkeepapi.Keep()
+        self.grocyapi = self.get_app("grocy_api")
         self.app_timezone = self.args["app_timezone"]
         self.timezone = pytz.timezone(self.app_timezone)
 
@@ -50,54 +46,6 @@ class SyncGKeepandGrocy(hass.Hass):
     def callback_sync(self, kwargs):
         self.sync_lists()
         
-    def get_product_grocy(self , product_id):
-        if self.debug:
-            self.log("Product Id : " + product_id, level = "INFO")
-        url= self.host + ':' + self.grocy_port + '/api/stock/products/' + product_id
-        r = requests.get(url, verify=self.ssl, headers={'GROCY-API-KEY': self.grocy_key })
-        if r.status_code == 200:
-            product = r.json()
-            if self.debug:
-                self.log("Grocy product : " + product['product']['name'] , level = "INFO")
-        else:
-            self.log(r.json()['error_message'], level = "INFO")
-        return product
-    
-    def get_g_sl(self):
-        url =  self.host + ':' + self.grocy_port + '/api/objects/shopping_list'
-        r = requests.get(url, verify=self.ssl, headers={'GROCY-API-KEY': self.grocy_key } )
-        if r.status_code == 200:
-            if self.debug:
-                self.log("Get shopping list succes" , level = "INFO")
-        else:
-            self.log(r, level = "INFO")
-            
-        return r.json()
-        
-    def purchase_product_grocy(self, grocy_item_id, best_date,price,amount):
-        if best_date is None:
-            best_date = '2999-12-31'
-        payload = { 'amount': amount , 'best_before_date': best_date , 'transaction_type': 'purchase' , 'price': price }
-        url =  self.host + ':' + self.grocy_port + '/api/stock/products/' + grocy_item_id + '/add'
-        r =requests.post(url, verify=self.ssl, headers={'GROCY-API-KEY': self.grocy_key } , json=payload)
-        if r.status_code == 200:
-            if self.debug:
-                self.log("Product " + grocy_item_id + " purchased successful", level = "INFO")
-            return True
-        else:
-            self.log(r.json()['error_message'], level = "INFO")
-            return False
-    
-    def delete_product_sl_grocy(self, product_sl_id):
-        url =  self.host + ':' + self.grocy_port + '/api/objects/shopping_list/' + product_sl_id
-        r = requests.delete(url, verify=self.ssl, headers={'GROCY-API-KEY': self.grocy_key } )
-        if r.status_code == 204:
-            if self.debug:
-                self.log("Product " + product_sl_id + " delete successful", level = "INFO")
-            return True
-        else:
-            self.log(r.json()['error_message'], level = "INFO")
-            return False
     
     def get_gk_list(self):
         for list_temp in self.keep.all():
@@ -121,13 +69,13 @@ class SyncGKeepandGrocy(hass.Hass):
             self.log("GKeep sync")
         self.keep.sync()
         gk_tmp_l = self.get_gk_list()
-        grocy_tmp_l = self.get_g_sl()
+        grocy_tmp_l = self.grocyapi.get_shopping_list()
         update_gk = False
         update_grocy = False
         gk_date_up = pytz.utc.localize(gk_tmp_l.timestamps.updated)
         for p in grocy_tmp_l:
             p_time = self.timezone.localize(datetime.datetime.strptime(p['row_created_timestamp'] , '%Y-%m-%d %H:%M:%S' ))
-            p_obj = self.get_product_grocy(p['product_id'])
+            p_obj = self.grocyapi.get_product(p['product_id'])
             if self.debug:
                 self.log("Grocy product time")
                 self.log(p_time)
@@ -155,8 +103,8 @@ class SyncGKeepandGrocy(hass.Hass):
                         instock_amount = str(int(int(p['amount']) * float(p_obj['product']['qu_factor_purchase_to_stock'])))
                         if self.debug:
                             self.log("Amount : " + instock_amount)
-                        if self.purchase_product_grocy(p['product_id'],p_obj['next_best_before_date'],p_obj['last_price'],instock_amount ):
-                            self.delete_product_sl_grocy(p['id'])
+                        if self.grocyapi.purchase_product(p['product_id'],p_obj['next_best_before_date'],p_obj['last_price'],instock_amount ):
+                            self.grocyapi.delete_product_in_sl(p['id'])
                             break
         if self.debug:
             self.log("GKeep sync")
