@@ -1,0 +1,9 @@
+grocy_api:
+  module: grocyapi
+  class: GrocyApi
+  api_key: !secret GROCY_API
+  port: '9192'
+  host: !secret HOST
+  verify_ssl: False
+  priority: 10
+  DEBUG: False

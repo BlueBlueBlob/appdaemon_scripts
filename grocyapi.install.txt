@@ -1,0 +1,6 @@
+grocyapi
+appdaemon python packages : Requests
+installation :
+    1 : create a Grocy key API (check in Grocy : Settings/Manage API keys)
+    2 : set up your apps.yaml
+    3 : copy grocyapi.py to your appdaemon apps directory
