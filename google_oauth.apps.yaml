@@ -1,0 +1,11 @@
+google_oauth:
+  module: google_oauth
+  class: GoogleOauth
+  scopes: 'https://www.googleapis.com/auth/tasks.readonly' , 'https://www.googleapis.com/auth/tasks'
+  input_txt_id: 'input_text.gtasks_rc'
+  credentials_json: '/config/credentials.json'
+  token_pickle: '/config/token.pickle'
+  service_version: 'v1'
+  service_name: 'tasks'
+  priority: 5
+  DEBUG: False

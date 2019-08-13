@@ -1,5 +1,4 @@
 sync_gkeep_grocy 
-appdaemon system packages : gcc g++
 appdaemon python packages : Requests gkeepapi
 module dependencies : GrocyApi
 installation :

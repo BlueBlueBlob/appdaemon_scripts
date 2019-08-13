@@ -1,0 +1,12 @@
+google_oauth
+appdaemon system packages : gcc g++
+appdaemon python packages : Requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+installation :
+    1 : create a credentials json : go to https://developers.google.com/tasks/quickstart/python#step_1_turn_on_the
+        "Enable The Google Tasks API"
+    2 : copy credentials file to a writable Hass directory
+    3 : add to your configuration.yaml file an input_text with name you want (needed for first authentication)
+    4 : set up your apps.yaml
+    5 : copy google_oauth.py to your appdaemon apps directory
+    6 : identify your Google account on in url in notification
+    7 : enter your code in input_text from installation in step 3
