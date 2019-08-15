@@ -1,6 +1,5 @@
-grocyapi
-appdaemon python packages : Requests
+openfoodfactapi
+appdaemon python packages : Requests 
 installation :
-    1 : create a Grocy key API (check in Grocy : Settings/Manage API keys)
-    2 : set up your apps.yaml
-    3 : copy grocyapi.py to your appdaemon apps directory
+    1 : set up your apps.yaml
+    2 : copy openfoodfact_api.py to your appdaemon apps directory

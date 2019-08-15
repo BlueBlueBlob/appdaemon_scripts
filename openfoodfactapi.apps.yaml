@@ -1,0 +1,6 @@
+off_api:
+  module: openfoodfact_api
+  class: OpenFoodFactApi
+  domain: "be"
+  priority: 5
+  DEBUG: False
