@@ -1,6 +1,8 @@
 import appdaemon.plugins.hass.hassapi as hass
 import requests
 import json
+import os
+import base64
 
 class GrocyApi(hass.Hass):
     verify_ssl = True
@@ -100,3 +102,79 @@ class GrocyApi(hass.Hass):
         if not r.json():
             self.log("Chores list empty..." , level = "WARNING")
         return r.json()
+        
+    def all_product(self):
+        url =  self.base_url + '/api/objects/products'
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers )
+        if r.status_code == 200:
+            if self.debug:
+                self.log(r.json() , level = "INFO")
+        else:
+            self.log(r.json()['error_message'], level = "ERROR")
+        return r.json()
+        
+    def get_product_group(self, id = "" , name = ""):
+        url =  self.base_url + '/api/objects/product_groups'
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers )
+        if r.status_code == 200:
+            if self.debug:
+                self.log(r.json() , level = "INFO")
+        else:
+            self.log(r.json()['error_message'], level = "ERROR")
+            return
+        
+        for pg in r.json():
+            if id != "":
+                if pg['id'] == id:
+                    if self.debug:
+                        self.log('id : {} , name : {}'.format(pg['id'], pg['name']) , level = "INFO")
+                    return pg['name']
+            if name != "":
+                if pg['name'] == name:
+                    if self.debug:
+                        self.log('id : {} , name : {}'.format(pg['id'], pg['name']) , level = "INFO")
+                    return pg['id']
+        else:
+            if self.debug:
+                if id != "":
+                    self.log('id {} not found'.format(id), level = "ERROR")
+                else:
+                    self.log('name {} not found'.format(name), level = "ERROR")
+            
+    def update_product(self, product_id, payload):
+        up_header = self.headers
+        up_header['accept'] = '*/*'
+        up_header['Content-Type'] = 'application/json'
+        if self.debug:
+            self.log('product id : {} , payload : {}' .format(product_id, payload))
+        url = self.base_url + '/api/objects/products/' + product_id
+        r =requests.put(url, verify=self.verify_ssl, headers=up_header , data=json.dumps(payload))
+        if r.status_code == 204:
+            if self.debug:
+                self.log("Product " + product_id + " succefully, updated", level = "INFO")
+            return True
+        else:
+            self.log(r.json()['error_message'], level = "ERROR")
+            return False
+    
+    def upload_product_picture(self, product_id, pic_file):
+        if not os.path.exists(pic_file):
+            self.log('{} not found !' .format(pic_file), level = "ERROR")
+            return False
+        up_header = self.headers
+        up_header['accept'] = '*/*'
+        up_header['Content-Type'] = 'application/octet-stream'
+        b64fn = base64.b64encode('{}.jpg'.format(product_id).encode('ascii'))
+        url = '{}/api/files/productpictures/{!s}' .format(self.base_url, str(b64fn, "utf-8"))
+        if self.debug:
+            self.log('b64 : {} , url : {}' .format(b64fn,url))
+        r =requests.put(url, verify=self.verify_ssl, headers=up_header , data=open(pic_file,'rb'))
+        if r.status_code == 204:
+            if self.debug:
+                self.log("Product " + product_id + " image succefully uploaded", level = "INFO")
+            return True
+        else:
+            self.log(r.json()['error_message'], level = "ERROR")
+            return False
+    
+        
