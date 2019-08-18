@@ -1,0 +1,8 @@
+add_off_info:
+  module: add_off_info
+  class: SyncOFFToGrocy
+  food_group_name: "Alimentation"
+  dependencies:
+    - grocy_api
+    - off_api
+  DEBUG: False
