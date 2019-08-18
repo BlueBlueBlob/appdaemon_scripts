@@ -51,8 +51,7 @@ class SyncGTasksAndGrocy(hass.Hass):
                 if task_list['title'] == self.tl_name:
                     self.tl_id = task_list['id']
                     if self.debug:
-                        self.log("Task list found : " + task_list['title'])
-                        self.log(self.tl_id)
+                        self.log('Task list found, name : {} , id : {}' .format(task_list['title'], self.tl_id))
                     break
             else:
                 self.log("No list found")
@@ -84,21 +83,14 @@ class SyncGTasksAndGrocy(hass.Hass):
             c = self.grocyapi.get_chore(chore['chore_id'])
             
             if self.debug:
-                self.log("Chore due date : ")
-                self.log(chore_due_d)
-                self.log("Gtasks list last update : ")
-                self.log(self.tl_lastup)
+                self.log( 'Chore due date : {}' .format(chore_due_d))
+                self.log( 'Gtasks list last update : {}' .format(self.tl_lastup))
                 self.log(c)
             if chore['last_tracked_time'] is not None:
                 chore_lastc_d = pytz.utc.localize(datetime.datetime.strptime(chore['last_tracked_time'] , '%Y-%m-%d %H:%M:%S' ))
                 has_lastc = True
                 if self.debug:
-                    self.log("Chore last done : ")
-                    self.log(chore_lastc_d)
-                if chore_lastc_d > self.tl_lastup:
-                    if self.debug:
-                        self.log("Waiting GTasks synchro")
-                    continue
+                    self.log('Chore last done : {}' .format(chore_lastc_d))
                 if track_date_only:
                     chore_lastc_d = chore_lastc_d.date()
             if 'items' not in task_list:
@@ -112,8 +104,7 @@ class SyncGTasksAndGrocy(hass.Hass):
                 task_due_d = self.rfc3339_to_utc(task['due']).date()
                 if self.debug:
                     self.log(task['title'] + " " + c['chore']['name'])
-                    self.log("Task date : ")
-                    self.log(task_due_d)
+                    self.log('Task date : {} ' .format(task_due_d))
                 if task['title'] == c['chore']['name'] and task_due_d == chore_due_d:
                     if self.debug:
                         self.log("Task found with status : " + task['status'] )
