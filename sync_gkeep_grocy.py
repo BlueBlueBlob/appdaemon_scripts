@@ -33,7 +33,7 @@ class SyncGKeepandGrocy(hass.Hass):
         except gkeepapi.exception.ParseException as e:
             self.log(e.raw, level = "ERROR")
         if not login_success:
-            self.log("ERROR : Google Keep login failed.", level = "INFO")
+            self.log("ERROR : Google Keep login failed.", level = "ERROR")
             return False
 
         self.sync_lists()
@@ -66,21 +66,19 @@ class SyncGKeepandGrocy(hass.Hass):
   
     def sync_lists(self):
         if self.debug:
-            self.log("GKeep sync")
+            self.log("GKeep sync on start")
         self.keep.sync()
         gk_tmp_l = self.get_gk_list()
         grocy_tmp_l = self.grocyapi.get_shopping_list()
         update_gk = False
         update_grocy = False
-        gk_date_up = pytz.utc.localize(gk_tmp_l.timestamps.updated)
+        gk_date_up = pytz.utc.localize(gk_tmp_l.timestamps.edited)
         for p in grocy_tmp_l:
             p_time = self.timezone.localize(datetime.datetime.strptime(p['row_created_timestamp'] , '%Y-%m-%d %H:%M:%S' ))
             p_obj = self.grocyapi.get_product(p['product_id'])
             if self.debug:
-                self.log("Grocy product time")
-                self.log(p_time)
-                self.log("Google keep last update time")
-                self.log(gk_date_up)
+                self.log('Grocy product time : {}' .format(p_time))
+                self.log('Google keep last update time : {}'.format(gk_date_up))
             if p_time > gk_date_up:
                 if self.debug:
                     self.log("New product in Grocy shopping list", level = "INFO")
@@ -95,6 +93,7 @@ class SyncGKeepandGrocy(hass.Hass):
                     if self.debug:
                         self.log("New product in GKeep : " + p_obj['product']['name'])
                     gk_tmp_l.add(p_obj['product']['name'] , False)
+                continue
             else:
                 if self.debug:
                     self.log("Looking in GKeep checked list")
@@ -107,6 +106,6 @@ class SyncGKeepandGrocy(hass.Hass):
                             self.grocyapi.delete_product_in_sl(p['id'])
                             break
         if self.debug:
-            self.log("GKeep sync")
+            self.log("GKeep sync at end")
         self.keep.sync()
         

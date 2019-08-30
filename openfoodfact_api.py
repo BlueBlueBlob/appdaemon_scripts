@@ -10,12 +10,12 @@ class OpenFoodFactApi(hass.Hass):
     
     def initialize (self):
         self.domain = self.args["domain"]
-        self.main_url = "https://" + self.domain + self.base_url + ".json"
+        self.main_url = "https://" + self.domain + self.base_url 
         if 'DEBUG' in self.args:
             self.debug = self.args["DEBUG"]
           
     def get_product(self, barcode):
-        url = self.main_url + barcode
+        url = self.main_url + barcode + ".json"
         if self.debug:
             self.log('barcode : {} , url : {}' .format(barcode,url), level = "INFO")
         r = requests.get(url , headers=self.headers)
