@@ -16,9 +16,8 @@ class SyncOFFToGrocy(hass.Hass):
         if 'DEBUG' in self.args:
             self.debug = self.args["DEBUG"]
         self.food_group_id = self.grocyapi.get_product_group(name = self.args['food_group_name'])
-        self.populate_grocy()
         time = datetime.time(1, 00, 0)
-        self.handle = self.run_daily(self.populate_cb, time)
+        self.handle = self.run_in(self.populate_cb, 0)
         
     def terminate (self):
         self.grocyapi = None
