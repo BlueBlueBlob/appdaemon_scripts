@@ -68,6 +68,19 @@ class GrocyApi(hass.Hass):
             self.log(r.json()['error_message'], level = "INFO")
             return False
             
+    def complete_chore(self, chore_id, completed):    
+        str = completed.strftime('%Y-%m-%d %H:%M:%S')    
+        payload = { "tracked_time": str }    
+        url =  self.host + ':' + self.grocy_port + '/api/chores/' + chore_id + '/execute'    
+        r = requests.post(url, verify=self.ssl, headers={'GROCY-API-KEY': self.grocy_key } , json=payload)    
+        if r.status_code == 200:    
+            if self.debug:    
+                self.log("Chore " + chore_id + " tracks successful", level = "INFO")    
+            return True    
+        else:    
+            self.log(r.json()['error_message'], level = "ERROR")    
+            return False
+            
     def get_chore(self, chore_id):
         url =  self.base_url + '/api/chores/' + chore_id
         if self.debug:

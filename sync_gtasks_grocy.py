@@ -22,7 +22,6 @@ class SyncGTasksAndGrocy(hass.Hass):
         self.tl_name = self.args['chores_list']
         self.google_oauth_tasks = self.get_app("google_oauth_tasks")
         self.grocyapi = self.get_app("grocy_api")
-        self.init_tasklist()
         self.handle = self.run_every(self.sync_cb , datetime.datetime.now() , 300)
         
     def terminate(self):
@@ -68,6 +67,7 @@ class SyncGTasksAndGrocy(hass.Hass):
         return tasklist
         
     def sync(self):
+        self.init_tasklist()
         chores_list = self.grocyapi.get_chores()
         task_list = self.get_tasklist()
         for chore in chores_list:
